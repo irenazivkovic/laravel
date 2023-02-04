@@ -14,7 +14,12 @@ class KlijentController extends Controller
      */
     public function index()
     {
-        //
+        $klijenti = Klijent::all();
+
+        return response()->json([
+            'STATUS' => 200,
+            'KLIJENTI' => $klijenti
+        ]);
     }
 
     /**
@@ -46,7 +51,12 @@ class KlijentController extends Controller
      */
     public function show(Klijent $klijent)
     {
-        //
+        $klijent_show = Klijent::find($klijent)->first();
+
+        return response()->json([
+            'STATUS' => 200,
+            'KLIJENT' => $klijent_show
+        ]);
     }
 
     /**

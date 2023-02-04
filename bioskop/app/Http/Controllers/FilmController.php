@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Film;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class FilmController extends Controller
 {
@@ -14,7 +15,12 @@ class FilmController extends Controller
      */
     public function index()
     {
-        //
+        $filmovi = Film::all();
+
+        return response()->json([
+            'STATUS' => 200,
+            'FILMOVI' => $filmovi
+        ]);
     }
 
     /**
@@ -35,7 +41,32 @@ class FilmController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'naziv' => 'required|string',
+            'reziser' => 'required|string',
+            'godina' => 'required|integer'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'STATUS' => 404,
+                'ERROR' => $validator->errors()
+            ]);
+        }
+
+        $new_film = Film::create([
+            'naziv' => $request->naziv,
+            'reziser' => $request->reziser,
+            'godina' => $request->godina
+        ]);
+
+        return response()->json([
+            'STATUS' => 200,
+            'MESSAGE' => 'Novi film je unet u bazu.',
+            'FILM' => $new_film
+        ]);
+
+        
     }
 
     /**
@@ -46,7 +77,12 @@ class FilmController extends Controller
      */
     public function show(Film $film)
     {
-        //
+        $film_show = Film::find($film)->first();
+
+        return response()->json([
+            'STATUS' => 200,
+            'FILM' => $film_show
+        ]);
     }
 
     /**
@@ -80,6 +116,11 @@ class FilmController extends Controller
      */
     public function destroy(Film $film)
     {
-        //
+        Film::find($film)->first()->delete();
+
+        return response()->json([
+            'STATUS' => 200,
+            'MESSAGE' => 'Film je obrisan.',
+        ]);
     }
 }
